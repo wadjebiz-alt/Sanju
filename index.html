@@ -813,6 +813,23 @@
   <div class="heart-loader">💝</div>
   <p id="loaderMsg">Made with every heartbeat, just for you, Sanju... 💕</p>
   <div class="progress-bar"><div class="progress-fill"></div></div>
+  <button id="tapBtn" style="
+    margin-top: 30px;
+    padding: 14px 36px;
+    background: linear-gradient(135deg, #FF6B8A, #C94070);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.4rem;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(255,107,138,0.5);
+    animation: pulse 1.5s ease infinite;
+  ">Tap to open your gift 🎁</button>
+</div>
+  <div class="heart-loader">💝</div>
+  <p id="loaderMsg">Made with every heartbeat, just for you, Sanju... 💕</p>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
 </div>
 
 <!-- ===== HERO ===== -->
@@ -1030,7 +1047,7 @@
 <!-- ===== GAME 1: MEMORY MATCH ===== -->
 <section id="game-match" class="reveal">
   <div class="game-container">
-    <div class="section-title">💝 Memory Match</div>
+    <div class="section-title">❔ Memory Match</div>
     <p class="section-subtitle">Match all the love symbols!</p>
     <div class="game-intro">
       <p>Find all 8 matching pairs. Every match reveals a little truth about you and Kundan ✨</p>
@@ -1377,7 +1394,6 @@ function checkSecretUnlock() {
 //  LOADER
 // ============================================================
 window.addEventListener('load', () => {
-  // Rotating loader messages
   const loaderMessages = [
     "Made with every heartbeat, just for you, Sanju... 💕",
     "Wrapping up all of Kundan's love... 🎁",
@@ -1389,27 +1405,33 @@ window.addEventListener('load', () => {
   const lmEl = document.getElementById('loaderMsg');
   const lmInterval = setInterval(() => {
     lmi = (lmi + 1) % loaderMessages.length;
-    if (lmEl) { lmEl.style.opacity = '0'; setTimeout(() => { lmEl.textContent = loaderMessages[lmi]; lmEl.style.opacity = '1'; }, 300); }
+    if (lmEl) {
+      lmEl.style.opacity = '0';
+      setTimeout(() => { lmEl.textContent = loaderMessages[lmi]; lmEl.style.opacity = '1'; }, 300);
+    }
   }, 500);
-  setTimeout(() => {
+
+  document.getElementById('tapBtn').addEventListener('click', () => {
     clearInterval(lmInterval);
+
+    // Unlock audio on mobile with user gesture
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioCtx.resume().then(() => {
+      function playLoop() {
+        playBirthday();
+        setTimeout(playLoop, 13000);
+      }
+      playLoop();
+      document.getElementById('musicBtn').textContent = '🎶';
+      musicPlaying = true;
+    });
+
+    // Hide loader
     document.getElementById('loader').style.opacity = '0';
     document.getElementById('loader').style.transform = 'scale(1.1)';
     setTimeout(() => document.getElementById('loader').style.display = 'none', 1000);
     launchConfetti();
-setTimeout(() => {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  function playLoop() {
-    playBirthday();
-    const totalDuration = 13000;
-    setTimeout(playLoop, totalDuration);
-  }
-  playLoop();
-  document.getElementById('musicBtn').textContent = '🎶';
-  musicPlaying = true;
-}, 500);
-    setTimeout(() => { playBirthday(); }, 500);
-  }, 2800);
+  });
 });
 
 // ============================================================
@@ -1572,7 +1594,7 @@ function initMatchGame() {
     card.className = 'match-card';
     card.dataset.sym = sym;
     card.dataset.idx = idx;
-    card.innerHTML = `<div class="card-front">💝</div><div class="card-back">${sym}</div>`;
+    card.innerHTML = `<div class="card-front">❔</div><div class="card-back">${sym}</div>`;
     card.addEventListener('click', () => flipCard(card));
     grid.appendChild(card);
   });
