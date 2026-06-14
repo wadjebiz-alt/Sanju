@@ -1428,6 +1428,17 @@ window.addEventListener('load', () => {
     document.getElementById('loader').style.transform = 'scale(1.1)';
     setTimeout(() => document.getElementById('loader').style.display = 'none', 1000);
     launchConfetti();
+setTimeout(() => {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  function playLoop() {
+    playBirthday();
+    const totalDuration = 13000;
+    setTimeout(playLoop, totalDuration);
+  }
+  playLoop();
+  document.getElementById('musicBtn').textContent = '🎶';
+  musicPlaying = true;
+}, 500);
     setTimeout(() => { playBirthday(); }, 500);
   }, 2800);
 });
@@ -2009,6 +2020,22 @@ function dropCloth() {
       o.start(t); o.stop(t + 0.5);
     });
   } catch(e) {}
+  // Reveal chime — extra emotional sound
+try {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const revealNotes = [392, 494, 587, 740, 988];
+  revealNotes.forEach((freq, i) => {
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    o.type = 'sine';
+    o.frequency.value = freq;
+    const t = audioCtx.currentTime + i * 0.28;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.22, t + 0.08);
+    g.gain.linearRampToValueAtTime(0, t + 0.6);
+    o.start(t); o.stop(t + 0.7);
+  });
+} catch(e) {}
 }
 
 // ============================================================
